@@ -552,13 +552,13 @@ if(MSVC)
     COMPILE_FLAGS "/D ZMQ_STATIC"
     OUTPUT_NAME "libzmq")
 else()
-    add_library(libzmq SHARED ${sources} ${public_headers} ${html-docs} ${readme-docs} ${zmq-pkgconfig})
+    add_library(zeromq SHARED ${sources} ${public_headers} ${html-docs} ${readme-docs} ${zmq-pkgconfig})
     if(ZMQ_BUILD_FRAMEWORK)
-      set_target_properties(libzmq PROPERTIES
+      set_target_properties(zeromq PROPERTIES
                             FRAMEWORK TRUE
                             OUTPUT_NAME "ZeroMQ"
                             PUBLIC_HEADER "${public_headers}"
-                            MACOSX_FRAMEWORK_IDENTIFIER "org.zeromq.libzmq"
+                            MACOSX_FRAMEWORK_IDENTIFIER "org.zeromq.zeromq"
                             MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${ZMQ_VERSION}
                             MACOSX_FRAMEWORK_BUNDLE_VERSION ${ZMQ_VERSION}
                             VERSION ${ZMQ_VERSION}
@@ -570,29 +570,29 @@ else()
       set_source_files_properties(${zmq-pkgconfig} PROPERTIES
                                   MACOSX_PACKAGE_LOCATION lib/pkgconfig)
     else()
-      set_target_properties(libzmq PROPERTIES
+      set_target_properties(zeromq PROPERTIES
                              OUTPUT_NAME "zmq"
                              PUBLIC_HEADER "${public_headers}")
     endif()
 endif()
 
-target_link_libraries(libzmq ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(zeromq ${CMAKE_THREAD_LIBS_INIT})
 if(HAVE_WS2_32)
-  target_link_libraries(libzmq ws2_32)
+  target_link_libraries(zeromq ws2_32)
 elseif(HAVE_WS2)
-  target_link_libraries(libzmq ws2)
+  target_link_libraries(zeromq ws2)
 endif()
 
 if(HAVE_RPCRT4)
-  target_link_libraries(libzmq rpcrt4)
+  target_link_libraries(zeromq rpcrt4)
 endif()
 
 if(HAVE_IPHLAPI)
-  target_link_libraries(libzmq iphlpapi)
+  target_link_libraries(zeromq iphlpapi)
 endif()
 
 if(RT_LIBRARY)
-  target_link_libraries(libzmq ${RT_LIBRARY})
+  target_link_libraries(zeromq ${RT_LIBRARY})
 endif()
 
 set(perf-tools local_lat
@@ -605,7 +605,7 @@ set(perf-tools local_lat
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug") # Why?
   foreach(perf-tool ${perf-tools})
     add_executable(${perf-tool} perf/${perf-tool}.cpp)
-    target_link_libraries(${perf-tool} libzmq)
+    target_link_libraries(${perf-tool} zeromq)
 
     if(RT_LIBRARY)
       target_link_libraries(${perf-tool} ${RT_LIBRARY})
@@ -614,7 +614,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug") # Why?
     if(ZMQ_BUILD_FRAMEWORK)
       # Copy perf-tools binaries into Framework
       add_custom_command(
-        TARGET libzmq ${perf-tool}
+        TARGET zeromq ${perf-tool}
         POST_BUILD
         COMMAND ${CMAKE_COMMAND}
         ARGS -E copy "$<TARGET_FILE:${perf-tool}>" "${LIBRARY_OUTPUT_PATH}/ZeroMQ.framework/Versions/${ZMQ_VERSION_STRING}/MacOS/${perf-tool}"
@@ -692,7 +692,7 @@ if(ZMQ_BUILD_TESTS)
 
   foreach(test ${tests})
     add_executable(${test} tests/${test}.cpp)
-    target_link_libraries(${test} libzmq)
+    target_link_libraries(${test} zeromq)
 
     if(RT_LIBRARY)
       target_link_libraries(${test} ${RT_LIBRARY})
@@ -736,7 +736,7 @@ if(MSVC)
             COMPONENT Runtime)
   endif()
 else()
-  install(TARGETS libzmq
+  install(TARGETS zeromq
           RUNTIME DESTINATION bin
           ARCHIVE DESTINATION lib
           LIBRARY DESTINATION lib
@@ -862,7 +862,7 @@ if(MSVC)
 endif()
 
 # Export this for library to help build this as a sub-project
-set(ZEROMQ_LIBRARY libzmq CACHE STRING "ZeroMQ library")
+set(ZEROMQ_LIBRARY zeromq CACHE STRING "ZeroMQ library")
 
 # Workaround for MSVS10 to avoid the Dialog Hell
 # FIXME: This could be removed with future version of CMake.
