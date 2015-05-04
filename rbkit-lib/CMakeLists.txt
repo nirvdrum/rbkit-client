@@ -4,9 +4,32 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
 # find packages
-find_package(Qt5WebkitWidgets)
+find_package(Qt5WebKitWidgets)
 find_package(Qt5PrintSupport)
 find_package(Qt5Sql)
+
+
+include_directories(
+    ${CMAKE_SOURCE_DIR}/msgpack-c/src/msgpack
+    ${CMAKE_SOURCE_DIR}/msgpack-c/src
+    ${CMAKE_SOURCE_DIR}/nzmqt/include
+    ${CMAKE_SOURCE_DIR}/nzmqt/3rdparty/cppzmq
+    ${CMAKE_SOURCE_DIR}/zeromq-4.0.4/include)
+
+
+QT5_WRAP_UI(RBKIT_UI_HEADERS
+    ui/rbkitmainwindow.ui
+    ui/askhost.ui
+    ui/heapdumpform.ui
+    ui/memoryview.ui
+    ui/comparesnapshotform.ui
+    ui/aboutdialog.ui
+    ui/parentviewform.ui)
+
+
+QT5_ADD_RESOURCES(RBKIT_UI_RESOURCES
+    tool_icons.qrc)
+
 
 
 add_library(rbkit
@@ -76,7 +99,14 @@ add_library(rbkit
     ui/centralwidget.h
     ui/ribbontoolbar.h
     layoututil.hpp
-    common.h)
+    common.h
+
+    ${RBKIT_UI_HEADERS}
+    ${RBKIT_UI_RESOURCES})
 
 
-target_link_libraries(rbkit Qt5::Widgets)
+set_property(TARGET rbkit PROPERTY CXX_STANDARD 11)
+
+
+target_link_libraries(rbkit Qt5::WebKitWidgets)
+target_link_libraries(rbkit Qt5::Sql)

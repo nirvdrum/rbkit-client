@@ -10,7 +10,7 @@ find_package(Qt5Core)
 include_directories(
     include
     3rdparty/cppzmq
-    ${CMAKE_SOURCE_DIR}/zeromq/include)
+    ${CMAKE_SOURCE_DIR}/zeromq-4.0.4/include)
 
 
 add_library(nzmqt
@@ -19,3 +19,6 @@ add_library(nzmqt
     include/nzmqt/global.hpp
     include/nzmqt/nzmqt.hpp
     include/nzmqt/impl.hpp)
+
+
+target_link_libraries(nzmqt Qt5::Core)
