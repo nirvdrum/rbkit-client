@@ -81,6 +81,7 @@ public slots:
     void onTimerExpiry();
     void triggerGc();
     void takeSnapshot();
+    void startCPUSnapshot();
     void startSubscriber();
 
 private:
